@@ -505,13 +505,13 @@ function Reel({
         </div>
       )}
 
-      <div className="absolute right-3 bottom-28 flex flex-col items-center gap-6 text-white">
+      <div className="absolute right-2 bottom-24 z-10 flex flex-col items-center gap-5 text-white [&_svg]:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] [&_span]:drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)] [&_svg]:[stroke-width:1.75] [&_button]:min-w-11">
         <button onClick={toggleLike} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
-          <Heart size={30} className={liked ? "text-rose-500 fill-rose-500" : ""} />
+          <Heart size={28} className={liked ? "text-rose-500 fill-rose-500" : ""} />
         </button>
         <button
           onClick={() => post.likes.length > 0 && setShowReactions(true)}
-          className="-mt-5 text-xs font-medium"
+          className="-mt-4 text-[13px] font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]"
           aria-label="See who reacted"
         >
           {formatViews(likeCount)}
@@ -520,17 +520,17 @@ function Reel({
           onClick={() => setShowComments(true)}
           className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
         >
-          <MessageCircle size={29} />
-          <span className="text-xs font-medium">{formatViews(post.comments.length)}</span>
+          <MessageCircle size={27} className="-scale-x-100" />
+          <span className="text-[13px] font-semibold">{formatViews(post.comments.length)}</span>
         </button>
         <button onClick={share} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
-          <Send size={27} />
-          <span className="text-xs font-medium">{formatViews(shareCount)}</span>
+          <Send size={26} />
+          <span className="text-[13px] font-semibold">{formatViews(shareCount)}</span>
         </button>
         <StarGiftButton creatorId={post.authorId} creatorName={post.authorName} postId={post.id} variant="reel" />
         <div className="flex flex-col items-center gap-1">
-          <Eye size={27} />
-          <span className="text-xs font-medium">{formatViews(post.views ?? 0)}</span>
+          <Eye size={26} />
+          <span className="text-[13px] font-semibold">{formatViews(post.views ?? 0)}</span>
         </div>
         <button
           onClick={saveVideo}
@@ -538,7 +538,7 @@ function Reel({
           aria-label="Download reel"
           className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-60"
         >
-          {saving ? <Loader2 size={27} className="animate-spin" /> : <Download size={27} />}
+          {saving ? <Loader2 size={27} className="animate-spin" /> : <Download size={26} />}
         </button>
       </div>
 
