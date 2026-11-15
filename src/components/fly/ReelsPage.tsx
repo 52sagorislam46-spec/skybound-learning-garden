@@ -505,7 +505,7 @@ function Reel({
         </div>
       )}
 
-      <div className="absolute right-2 bottom-24 z-10 flex flex-col items-center gap-5 text-white [&_svg]:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] [&_span]:drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)] [&_svg]:[stroke-width:1.75] [&_button]:min-w-11">
+      <div className="absolute right-2 bottom-14 z-10 flex flex-col items-center gap-4 text-white [&_svg]:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] [&_span]:drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)] [&_svg]:[stroke-width:1.75] [&_button]:min-w-11">
         <button onClick={toggleLike} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
           <Heart size={28} className={liked ? "text-rose-500 fill-rose-500" : ""} />
         </button>
