@@ -496,7 +496,8 @@ export function ProfilePage({
                   label="Fly AI"
                   onClick={() => {
                     setShowMenu(false);
-                    setShowAI(true);
+                    // Wait for the menu's back-history step to finish, otherwise it closes Fly AI right away.
+                    setTimeout(() => setShowAI(true), 350);
                   }}
                 />
                 <MenuTile
