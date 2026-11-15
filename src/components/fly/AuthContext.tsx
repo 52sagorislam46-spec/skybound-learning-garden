@@ -275,6 +275,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     const inFrame = typeof window !== "undefined" && window.top !== window.self;
+    const isMobile =
+      typeof navigator !== "undefined" &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    // On phones the Google popup often stays stuck on a blank page, so go
+    // straight to Google and come back to the app instead.
+    if (isMobile && !inFrame) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
     try {
       await signInWithPopup(auth, provider);
     } catch (error) {
