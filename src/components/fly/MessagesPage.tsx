@@ -768,8 +768,8 @@ function ChatSettingsSheet({
 }: {
   counts: { archived: number; hidden: number; blocked: number };
   onClose: () => void;
-  onNewGroup?: () => void;
-  onCalls?: () => void;
+  onNewGroup?: (() => void) | undefined;
+  onCalls?: (() => void) | undefined;
   onPick: (k: "archived" | "hidden" | "blocked") => void;
 }) {
   useLayerClose(onClose);
