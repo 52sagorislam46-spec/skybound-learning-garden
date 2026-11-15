@@ -435,7 +435,7 @@ function Reel({
           showControls || paused ? "opacity-100" : "opacity-0"
         }`}
       >
-        {isLong && (
+        {false && isLong && (
           <button
             onClick={() => seekBy(-10)}
             aria-label="Rewind 10 seconds"
@@ -455,7 +455,7 @@ function Reel({
             <Pause size={28} className="fill-white" />
           )}
         </button>
-        {isLong && (
+        {false && isLong && (
           <button
             onClick={() => seekBy(10)}
             aria-label="Forward 10 seconds"
