@@ -301,7 +301,7 @@ export function MessagesPage({
     <div className="pb-20">
       <header className="sticky top-0 bg-white/90 backdrop-blur-xl border-b border-gray-100 px-5 h-14 flex items-center z-10">
         <h1 className="text-xl font-bold text-gray-900">Messages</h1>
-        {onOpenGroup && (
+        {false && onOpenGroup && (
           <button
             onClick={() => setCreatingGroup(true)}
             aria-label="Create group"
@@ -311,7 +311,7 @@ export function MessagesPage({
             <UsersRound size={18} />
           </button>
         )}
-        {onOpenCalls && (
+        {false && onOpenCalls && (
           <button
             onClick={onOpenCalls}
             aria-label="Call history"
@@ -327,7 +327,7 @@ export function MessagesPage({
           }}
           aria-label="App update"
           title="নতুন ভার্সন ডাউনলোড"
-          className={`${onOpenGroup || onOpenCalls ? "" : "ml-auto"} relative w-9 h-9 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 active:scale-90 transition-transform`}
+          className={`ml-auto relative w-9 h-9 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500 active:scale-90 transition-transform`}
         >
           <Download size={18} />
           {updateAvailable && (
@@ -362,6 +362,8 @@ export function MessagesPage({
         <ChatSettingsSheet
           counts={counts}
           onClose={() => setChatSettingsOpen(false)}
+          onNewGroup={onOpenGroup ? () => { setChatSettingsOpen(false); setTimeout(() => setCreatingGroup(true), 350); } : undefined}
+          onCalls={onOpenCalls ? () => { setChatSettingsOpen(false); setTimeout(() => onOpenCalls(), 350); } : undefined}
           onPick={(k) => {
             setChatSettingsOpen(false);
             setView(k);
@@ -605,6 +607,19 @@ export function MessagesPage({
               </p>
             </div>
 
+            {onOpenGroup && (
+              <button
+                onClick={() => {
+                  setMenuFor(null);
+                  setTimeout(() => setCreatingGroup(true), 350);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <UsersRound size={18} className="text-gray-400" />
+                {menuFor.group ? "New group" : "Create group"}
+              </button>
+            )}
+
             <button
               onClick={() => {
                 togglePref(menuFor.otherId, "pinned");
@@ -748,9 +763,13 @@ function ChatSettingsSheet({
   counts,
   onClose,
   onPick,
+  onNewGroup,
+  onCalls,
 }: {
   counts: { archived: number; hidden: number; blocked: number };
   onClose: () => void;
+  onNewGroup?: (() => void) | undefined;
+  onCalls?: (() => void) | undefined;
   onPick: (k: "archived" | "hidden" | "blocked") => void;
 }) {
   useLayerClose(onClose);
@@ -764,6 +783,16 @@ function ChatSettingsSheet({
       <div className="w-full bg-white rounded-t-3xl p-4 pb-8" onClick={(e) => e.stopPropagation()}>
         <div className="mx-auto w-10 h-1 rounded-full bg-gray-300 mb-3" />
         <h2 className="text-lg font-bold text-gray-900 px-1 mb-2">Chat settings</h2>
+        {([
+          onNewGroup && { key: "group", label: "New group", icon: UsersRound, fn: onNewGroup },
+          onCalls && { key: "calls", label: "Call history", icon: Phone, fn: onCalls },
+        ].filter(Boolean) as { key: string; label: string; icon: typeof Phone; fn: () => void }[]).map(({ key, label, icon: Icon, fn }) => (
+          <button key={key} onClick={fn} className="w-full flex items-center gap-3 px-2 py-3 rounded-2xl active:bg-gray-100">
+            <span className="w-10 h-10 rounded-full bg-sky-50 flex items-center justify-center text-sky-600"><Icon size={19} /></span>
+            <span className="flex-1 text-left text-sm font-medium text-gray-900">{label}</span>
+            <ChevronRight size={18} className="text-gray-400" />
+          </button>
+        ))}
         {rows.map(({ k, label, icon: Icon, n }) => (
           <button
             key={k}
