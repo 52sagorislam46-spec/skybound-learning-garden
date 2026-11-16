@@ -37,6 +37,9 @@ import { BOOST_DAYS, boostPrice, isSponsored, requestBoost } from "./boost";
 import { AddMoneyCard } from "./AddMoneyCard";
 import { LikedBy, ReactionsSheet } from "./ReactionsSheet";
 import { ProductCard } from "./shop";
+import { PollView, SaveButton } from "./extras";
+import { uploadToCloudinary } from "../../lib/firebase";
+import { ImagePlus } from "lucide-react";
 
 export function CommentItem({
   comment,
@@ -146,6 +149,7 @@ export function CommentItem({
               {comment.vip && <VipBadge />}
             </button>
             <p className="select-text text-[14px] leading-snug text-gray-800 break-words whitespace-pre-wrap">{comment.text}</p>
+            {comment.imageUrl && <img src={comment.imageUrl} alt="" loading="lazy" className="mt-1.5 max-h-56 rounded-xl object-cover" />}
           </div>
           <div className="flex items-center gap-4 mt-1 px-2 text-xs text-gray-500">
             <span>{timeAgo(comment.createdAt)}</span>
@@ -262,6 +266,7 @@ export function PostCard({
   const { user, profile } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [commentImg, setCommentImg] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
@@ -382,8 +387,15 @@ export function PostCard({
   };
 
   const addComment = async () => {
-    if (!user || !profile || !commentText.trim()) return;
+    if (!user || !profile || (!commentText.trim() && !commentImg)) return;
     setBusy(true);
+    let imageUrl = "";
+    try {
+      if (commentImg) imageUrl = (await uploadToCloudinary(commentImg)).url;
+    } catch {
+      setBusy(false);
+      return;
+    }
     const comment: Comment = {
       id: `${Date.now()}-${user.uid}`,
       authorId: user.uid,
@@ -393,11 +405,13 @@ export function PostCard({
       createdAt: Date.now(),
       likes: [],
       replies: [],
+      ...(imageUrl ? { imageUrl } : {}),
       ...(isVipOf(profile, post.authorId) ? { vip: true } : {}),
     };
     try {
       await updateDoc(ref, { comments: arrayUnion(comment) });
       setCommentText("");
+      setCommentImg(null);
     } finally {
       setBusy(false);
     }
@@ -431,6 +445,7 @@ export function PostCard({
               {post.authorName}
             </button>
             <UserBadges uid={post.authorId} />
+            {post.feeling && <span className="text-gray-500 text-xs truncate">is {post.feeling}</span>}
             <span className="text-gray-300">·</span>
             <span className="text-gray-400 shrink-0">{timeAgo(post.createdAt)}</span>
             <span className="ml-auto flex items-center gap-1 shrink-0" ref={menuRef}>
@@ -562,6 +577,7 @@ export function PostCard({
               </div>
             </div>
           )}
+          {!locked && <PollView post={post} />}
           {post.exclusive && (
             <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-semibold text-amber-600">
               <Crown size={12} /> VIP exclusive
@@ -817,6 +833,7 @@ export function PostCard({
               <Send size={18} />
             </button>
             <StarGiftButton creatorId={post.authorId} creatorName={post.authorName} postId={post.id} />
+            <SaveButton postId={post.id} size={18} className={post.mediaType === "video" ? "" : "ml-auto"} />
 
             {post.mediaType === "video" && (
               <span className="flex items-center gap-1.5 text-sm ml-auto">
@@ -842,7 +859,17 @@ export function PostCard({
                     creatorId={post.authorId}
                   />
                 ))}
+              {commentImg && (
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <img src={URL.createObjectURL(commentImg)} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                  <button onClick={() => setCommentImg(null)} className="text-rose-500">Remove</button>
+                </div>
+              )}
               <div className="flex items-center gap-2">
+                <label className="shrink-0 w-10 h-10 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center text-sky-500 cursor-pointer" aria-label="Add photo">
+                  <ImagePlus size={18} />
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => setCommentImg(e.target.files?.[0] ?? null)} />
+                </label>
                 <input
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
@@ -851,7 +878,7 @@ export function PostCard({
                 />
                 <button
                   onClick={addComment}
-                  disabled={busy || !commentText.trim()}
+                  disabled={busy || (!commentText.trim() && !commentImg)}
                   className="h-10 px-4 rounded-2xl bg-sky-500 text-white text-sm font-semibold disabled:opacity-50"
                 >
                   Post

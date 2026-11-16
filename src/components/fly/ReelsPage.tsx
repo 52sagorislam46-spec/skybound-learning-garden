@@ -14,6 +14,7 @@ import { rankForYou, recordComment, recordLike, recordShare, recordWatch, stable
 import { CommentItem } from "./PostCard";
 import { fetchProfile, sendMessage } from "./chat";
 import { timeAgo } from "../../lib/time";
+import { SaveButton } from "./extras";
 import type { Comment, Post, UserProfile } from "./types";
 import { StarGiftButton } from "./StarGift";
 import { isVipOf, ReelVipLock } from "./vip";
@@ -528,6 +529,7 @@ function Reel({
           <span className="text-[13px] font-semibold">{formatViews(shareCount)}</span>
         </button>
         <StarGiftButton creatorId={post.authorId} creatorName={post.authorName} postId={post.id} variant="reel" />
+        <SaveButton postId={post.id} size={26} className="flex flex-col items-center" />
         <div className="flex flex-col items-center gap-1">
           <Eye size={26} />
           <span className="text-[13px] font-semibold">{formatViews(post.views ?? 0)}</span>

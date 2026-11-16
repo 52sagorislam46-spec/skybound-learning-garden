@@ -97,6 +97,7 @@ function toProfile(firebaseUser: User, data: any): UserProfile {
     suspendedReason: data.suspendedReason ?? "",
     premiumUntil: Number(data.premiumUntil ?? 0),
     emailTwoFactor: Boolean(data.emailTwoFactor),
+    savedPosts: Array.isArray(data.savedPosts) ? data.savedPosts : [],
     createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
   };
 }

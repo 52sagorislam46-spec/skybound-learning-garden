@@ -23,6 +23,8 @@ export interface UserProfile {
   premiumUntil?: number;
   /** Ask for an e-mail code on every login (free two-step option). */
   emailTwoFactor?: boolean;
+  /** Post/reel ids bookmarked by this user. */
+  savedPosts?: string[];
   createdAt: number;
 }
 
@@ -40,6 +42,8 @@ export interface Comment {
   /** For replies: the person being replied to (shown as a highlighted mention). */
   replyToId?: string;
   replyToName?: string;
+  /** Optional photo attached to the comment. */
+  imageUrl?: string;
 }
 
 export interface Post {
@@ -69,6 +73,9 @@ export interface Post {
   boostUntil?: number;
   boostRequestedAt?: number;
   /** Social commerce: product tagged on this post/reel. */
+  /** Facebook-style feeling/activity, e.g. "😊 feeling happy". */
+  feeling?: string;
+  poll?: { question: string; options: { text: string; votes: string[] }[] } | null;
   product?: { title: string; price: string; imageUrl: string; link: string } | null;
   createdAt: number;
 }
