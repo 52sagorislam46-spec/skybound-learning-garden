@@ -38,6 +38,8 @@ function toPost(id: string, data: any): Post {
     tags: (data.tags as string[] | undefined) ?? [],
     views: typeof data.views === "number" ? data.views : 0,
     exclusive: data.exclusive === true,
+    feeling: typeof data.feeling === "string" ? data.feeling : "",
+    poll: data.poll && Array.isArray(data.poll.options) ? data.poll : null,
     bgStyle: typeof data.bgStyle === "string" ? data.bgStyle : "",
     product:
       data.product && typeof data.product === "object" && data.product.title

@@ -11,6 +11,7 @@ import { PostCard } from "./PostCard";
 import { useAuth } from "./AuthContext";
 import { fetchProfile } from "./chat";
 import { usePosts } from "./usePosts";
+import { Bookmark } from "lucide-react";
 import { formatViews } from "./views";
 import { productOrderLink } from "./shop";
 import { NotificationSettingsModal } from "./NotificationSettingsModal";
@@ -159,7 +160,7 @@ export function ProfilePage({
       return "en";
     }
   });
-  const [tab, setTab] = useState<"grid" | "reels" | "tagged" | "list" | "shop">("grid");
+  const [tab, setTab] = useState<"grid" | "reels" | "tagged" | "list" | "shop" | "saved">("grid");
   const [openPostId, setOpenPostId] = useState<string | null>(null);
   useBackClose(!!openPostId, () => setOpenPostId(null));
   const [people, setPeople] = useState<{ title: string; uids: string[] } | null>(
@@ -373,8 +374,10 @@ export function ProfilePage({
       p.text.toLowerCase().includes(`@${target.username.toLowerCase()}`),
   );
   const shopPosts = userPosts.filter((p) => !!p.product?.title);
+  const savedIds = new Set(isMe ? myProfile?.savedPosts ?? [] : []);
+  const savedPosts = posts.filter((p) => savedIds.has(p.id));
   const gridPosts =
-    tab === "reels" ? reelPosts : tab === "tagged" ? taggedPosts : userPosts;
+    tab === "reels" ? reelPosts : tab === "tagged" ? taggedPosts : tab === "saved" ? savedPosts : userPosts;
 
   if (showMembers) {
     if (!isAdmin(myProfile, user?.email)) {
@@ -903,6 +906,7 @@ export function ProfilePage({
           { key: "tagged", label: "Tagged", Icon: UserSquare },
           { key: "list", label: "List view", Icon: Rows3 },
           { key: "shop", label: "Shop", Icon: ShoppingBag },
+          ...(isMe ? ([{ key: "saved", label: "Saved", Icon: Bookmark }] as const) : []),
         ] as const).map(({ key, label, Icon }) => (
           <button
             key={key}
@@ -960,6 +964,8 @@ export function ProfilePage({
           <p className="text-center text-sm text-gray-400 py-10">
             {tab === "reels"
               ? "No reels yet."
+              : tab === "saved"
+                ? "এখনো কিছু সেভ করা নেই।"
               : tab === "tagged"
                 ? "No tagged posts yet."
                 : "No posts yet."}
