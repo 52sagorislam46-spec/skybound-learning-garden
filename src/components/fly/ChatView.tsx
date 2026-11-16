@@ -1,3 +1,4 @@
+import { VoicePlayer } from "./VoicePlayer";
 import { useBackClose } from "@/hooks/useBackClose";
 import { swipeReplyHandlers } from "./swipeReply";
 import { PREMIUM_REACTIONS, PREMIUM_STICKERS, isPremium } from "./premium";
@@ -920,11 +921,7 @@ export function ChatView({
                       </div>
                     )}
                     {m.mediaUrl && m.mediaType === "audio" && (
-                      <audio
-                        src={m.mediaUrl}
-                        controls
-                        className="w-56 max-w-full my-1"
-                      />
+                      <VoicePlayer src={m.mediaUrl} />
                     )}
                     {m.mediaUrl && m.mediaType === "file" && (
 
