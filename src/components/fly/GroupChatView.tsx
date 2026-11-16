@@ -1,3 +1,4 @@
+import { VoicePlayer } from "./VoicePlayer";
 import { useBackClose } from "@/hooks/useBackClose";
 import { swipeReplyHandlers } from "./swipeReply";
 import { PREMIUM_REACTIONS, isPremium } from "./premium";
@@ -738,7 +739,7 @@ export function GroupChatView({
                         </div>
                       )}
                       {message.mediaUrl && message.mediaType === "audio" && (
-                        <audio src={message.mediaUrl} controls className="w-56 max-w-full my-1" />
+                        <VoicePlayer src={message.mediaUrl} />
                       )}
                       {message.mediaUrl && message.mediaType === "file" && (
 

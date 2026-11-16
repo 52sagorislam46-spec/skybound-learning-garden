@@ -359,6 +359,9 @@ export function PostCard({
     !!post.exclusive && user?.uid !== post.authorId && !isVipOf(profile, post.authorId) && !isAdminVip(profile);
 
 
+  const lastTapRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [bigHeart, setBigHeart] = useState(false);
   const toggleLike = async () => {
     if (!user) return;
     recordLike(post, !liked);
@@ -676,12 +679,31 @@ export function PostCard({
                   className="w-full h-auto max-h-[75vh] object-cover block"
                 />
               ) : (
-                <img
-                  src={media}
-                  alt="post media"
-                  onClick={() => setLightbox(true)}
-                  className="w-full h-auto max-h-[75vh] object-cover cursor-zoom-in block"
-                />
+                <div className="relative">
+                  <img
+                    src={media}
+                    alt="post media"
+                    onClick={() => {
+                      const now = Date.now();
+                      if (now - lastTapRef.current < 300) {
+                        if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+                        lastTapRef.current = 0;
+                        if (!liked) toggleLike();
+                        setBigHeart(true);
+                        setTimeout(() => setBigHeart(false), 800);
+                        return;
+                      }
+                      lastTapRef.current = now;
+                      tapTimerRef.current = setTimeout(() => setLightbox(true), 300);
+                    }}
+                    className="w-full h-auto max-h-[75vh] object-cover cursor-zoom-in block"
+                  />
+                  {bigHeart && (
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <Heart size={96} className="text-white fill-white drop-shadow-lg animate-ping" />
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}
